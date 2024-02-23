@@ -1,0 +1,51 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. AnnualBusinessTaxCalculation.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+
+DATA DIVISION.
+FILE SECTION.
+
+WORKING-STORAGE SECTION.
+01 COMPANY-FINANCIALS.
+   05 COMPANY-NAME            PIC X(50).
+   05 ANNUAL-REVENUE          PIC 9(9)v99.
+   05 ANNUAL-EXPENSES         PIC 9(9)v99.
+   05 TAX-RATE                PIC V9(2) VALUE 0.25.
+   05 TAX-DUE                 PIC 9(9)v99.
+   05 PREPAID-TAX             PIC 9(9)v99.
+   05 TAX-BALANCE             PIC S9(9)v99.
+   05 BALANCE-MESSAGE         PIC X(50).
+
+PROCEDURE DIVISION.
+START-PROGRAM.
+    DISPLAY "Enter Company Name: "
+    ACCEPT COMPANY-NAME
+    DISPLAY "Enter Annual Revenue: $"
+    ACCEPT ANNUAL-REVENUE
+    DISPLAY "Enter Annual Expenses: $"
+    ACCEPT ANNUAL-EXPENSES
+    DISPLAY "Enter Prepaid Tax Amount: $"
+    ACCEPT PREPAID-TAX
+
+    COMPUTE TAX-DUE = (ANNUAL-REVENUE - ANNUAL-EXPENSES) * TAX-RATE
+    COMPUTE TAX-BALANCE = PREPAID-TAX - TAX-DUE
+
+    EVALUATE TRUE
+        WHEN TAX-BALANCE > 0
+            MOVE "Refund Due to Company: $" TO BALANCE-MESSAGE
+        WHEN TAX-BALANCE < 0
+            MOVE "Additional Tax Payable: $" TO BALANCE-MESSAGE
+            COMPUTE TAX-BALANCE = TAX-BALANCE * -1
+        WHEN OTHER
+            MOVE "No Additional Tax Payable or Refund Due" TO BALANCE-MESSAGE
+    END-EVALUATE
+
+    DISPLAY "Company Name: " COMPANY-NAME
+    DISPLAY "Tax Due for the Year: $" TAX-DUE
+    DISPLAY BALANCE-MESSAGE TAX-BALANCE
+    STOP RUN.
+
+END PROGRAM AnnualBusinessTaxCalculation.
