@@ -1,0 +1,57 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. StockPortfolioValuation.
+AUTHOR. Your Name.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+    SELECT stock-holdings ASSIGN TO 'stock-holdings.dat'.
+    SELECT current-prices ASSIGN TO 'current-prices.dat'.
+    SELECT portfolio-report ASSIGN TO 'portfolio-report.dat'.
+
+DATA DIVISION.
+FILE SECTION.
+FD stock-holdings.
+01 HOLDINGS-RECORD.
+    05 STOCK-SYMBOL       PIC X(10).
+    05 NUM-SHARES         PIC 9(5).
+
+FD current-prices.
+01 PRICE-RECORD.
+    05 PR-STOCK-SYMBOL    PIC X(10).
+    05 CURRENT-PRICE      PIC 9(5)V99.
+
+FD portfolio-report.
+01 REPORT-RECORD.
+    05 RP-STOCK-SYMBOL    PIC X(10).
+    05 RP-HOLDINGS-VALUE  PIC 9(7)V99.
+
+WORKING-STORAGE SECTION.
+01 TOTAL-PORTFOLIO-VALUE PIC 9(9)V99 VALUE 0.
+01 WS-END-OF-FILE        PIC X VALUE 'N'.
+    88 EOF               VALUE 'Y'.
+    88 NOT-EOF           VALUE 'N'.
+
+PROCEDURE DIVISION.
+BEGIN.
+    OPEN INPUT stock-holdings current-prices
+        OUTPUT portfolio-report
+    PERFORM UNTIL EOF
+        READ stock-holdings INTO HOLDINGS-RECORD AT END SET EOF TO TRUE
+        PERFORM UPDATE-VALUE
+    END-PERFORM
+    DISPLAY "Total Portfolio Value: $" TOTAL-PORTFOLIO-VALUE
+    CLOSE stock-holdings current-prices portfolio-report
+    STOP RUN.
+
+UPDATE-VALUE.
+    PERFORM UNTIL EOF
+        READ current-prices INTO PRICE-RECORD AT END SET EOF TO TRUE
+        IF STOCK-SYMBOL = PR-STOCK-SYMBOL
+            COMPUTE RP-HOLDINGS-VALUE = NUM-SHARES * CURRENT-PRICE
+            MOVE STOCK-SYMBOL TO RP-STOCK-SYMBOL
+            WRITE REPORT-RECORD
+            COMPUTE TOTAL-PORTFOLIO-VALUE = TOTAL-PORTFOLIO-VALUE + RP-HOLDINGS-VALUE
+            EXIT PERFORM
+        END-IF
+    END-PERFORM.
