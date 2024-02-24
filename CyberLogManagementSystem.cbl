@@ -1,0 +1,77 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. CyberLogManagementSystem.
+AUTHOR. Your Name.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+    SELECT security-logs ASSIGN TO 'security-logs.dat'.
+    SELECT incident-reports ASSIGN TO 'incident-reports.dat'.
+
+DATA DIVISION.
+FILE SECTION.
+FD security-logs.
+01 SECURITY-LOG-RECORD.
+    05 LOG-DATE            PIC 9(8).
+    05 LOG-TIME            PIC 9(6).
+    05 SOURCE-IP           PIC X(15).
+    05 DESTINATION-IP      PIC X(15).
+    05 ACTION              PIC X(10).
+    05 ALERT-CODE          PIC X(5).
+
+FD incident-reports.
+01 INCIDENT-REPORT.
+    05 IR-DATE             PIC 9(8).
+    05 IR-TIME             PIC 9(6).
+    05 IR-SOURCE-IP        PIC X(15).
+    05 IR-DESTINATION-IP   PIC X(15).
+    05 IR-ALERT-CODE       PIC X(5).
+    05 IR-DESCRIPTION      PIC X(50).
+
+WORKING-STORAGE SECTION.
+01 WS-END-OF-FILE           PIC X VALUE 'N'.
+    88 EOF                  VALUE 'Y'.
+    88 NOT-EOF              VALUE 'N'.
+01 WS-ALERT-DESCRIPTIONS.
+    05 WS-ALERT             PIC X(5) OCCURS 10 TIMES.
+    05 WS-DESCRIPTION       PIC X(50) OCCURS 10 TIMES.
+
+PROCEDURE DIVISION.
+BEGIN.
+    OPEN INPUT security-logs
+        OUTPUT incident-reports
+    INITIALIZE WS-ALERT-DESCRIPTIONS
+    PERFORM SETUP-ALERT-DESCRIPTIONS
+    PERFORM PROCESS-LOGS UNTIL EOF
+    CLOSE security-logs incident-reports
+    STOP RUN.
+
+SETUP-ALERT-DESCRIPTIONS.
+    MOVE '1001' TO WS-ALERT(1)
+    MOVE 'Unauthorized access attempt' TO WS-DESCRIPTION(1)
+    MOVE '2002' TO WS-ALERT(2)
+    MOVE 'Malware detected' TO WS-DESCRIPTION(2)
+    ... /* Additional alert codes and descriptions */
+
+PROCESS-LOGS.
+    READ security-logs INTO SECURITY-LOG-RECORD AT END SET EOF TO TRUE.
+    PERFORM UNTIL EOF
+        IF ACTION = 'ALERT'
+            PERFORM IDENTIFY-INCIDENT
+        END-IF
+        READ security-logs INTO SECURITY-LOG-RECORD AT END SET EOF TO TRUE.
+    END-PERFORM.
+
+IDENTIFY-INCIDENT.
+    PERFORM VARYING I FROM 1 BY 1 UNTIL I > 10
+        IF ALERT-CODE = WS-ALERT(I)
+            MOVE LOG-DATE TO IR-DATE
+            MOVE LOG-TIME TO IR-TIME
+            MOVE SOURCE-IP TO IR-SOURCE-IP
+            MOVE DESTINATION-IP TO IR-DESTINATION-IP
+            MOVE ALERT-CODE TO IR-ALERT-CODE
+            MOVE WS-DESCRIPTION(I) TO IR-DESCRIPTION
+            WRITE INCIDENT-REPORT
+            EXIT PERFORM
+        END-IF
+    END-PERFORM.
