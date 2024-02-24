@@ -1,0 +1,87 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. SEIMDataAnalysis.
+AUTHOR. Your Name.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+    SELECT seim-logs ASSIGN TO 'seim-logs.dat'.
+    SELECT threat-reports ASSIGN TO 'threat-reports.dat'.
+
+DATA DIVISION.
+FILE SECTION.
+FD seim-logs.
+01 SEIM-LOG-RECORD.
+    05 EVENT-DATE           PIC 9(8).
+    05 EVENT-TIME           PIC 9(6).
+    05 EVENT-SOURCE         PIC X(20).
+    05 EVENT-TYPE           PIC X(20).
+    05 SEVERITY             PIC X(10).
+        88 LOW-SEVERITY     VALUE 'LOW'.
+        88 MEDIUM-SEVERITY  VALUE 'MEDIUM'.
+        88 HIGH-SEVERITY    VALUE 'HIGH'.
+    05 EVENT-DESCRIPTION    PIC X(100).
+
+FD threat-reports.
+01 THREAT-REPORT-RECORD.
+    05 TR-DATE              PIC 9(8).
+    05 TR-TIME              PIC 9(6).
+    05 TR-SOURCE            PIC X(20).
+    05 TR-TYPE              PIC X(20).
+    05 TR-SEVERITY          PIC X(10).
+    05 TR-DESCRIPTION       PIC X(100).
+    05 PATTERN-IDENTIFIED   PIC X(50).
+
+WORKING-STORAGE SECTION.
+01 WS-CURRENT-DATE        PIC 9(8) VALUE 20231015.
+01 WS-END-OF-FILE         PIC X VALUE 'N'.
+    88 EOF                VALUE 'Y'.
+    88 NOT-EOF            VALUE 'N'.
+01 PATTERN-COUNTER        PIC 9(5) VALUE 0.
+
+PROCEDURE DIVISION.
+BEGIN.
+    OPEN INPUT seim-logs
+        OUTPUT threat-reports
+    PERFORM PROCESS-SEIM-LOGS UNTIL EOF
+    CLOSE seim-logs threat-reports
+    STOP RUN.
+
+PROCESS-SEIM-LOGS.
+    READ seim-logs INTO SEIM-LOG-RECORD AT END SET EOF TO TRUE.
+    PERFORM UNTIL EOF
+        IF HIGH-SEVERITY
+            PERFORM ANALYZE-FOR-PATTERNS
+            PERFORM GENERATE-THREAT-REPORT
+        END-IF
+        READ seim-logs INTO SEIM-LOG-RECORD AT END SET EOF TO TRUE.
+    END-PERFORM.
+
+ANALYZE-FOR-PATTERNS.
+    INITIALIZE PATTERN-COUNTER
+    EVALUATE EVENT-TYPE
+        WHEN 'Failed Login Attempt'
+            PERFORM COUNT-PATTERN 'Failed Login Attempt' INCREMENT PATTERN-COUNTER
+            IF PATTERN-COUNTER > 5
+                MOVE 'Suspected Brute Force Attack' TO PATTERN-IDENTIFIED
+            END-IF
+        WHEN 'Unexpected Access'
+            PERFORM COUNT-PATTERN 'Unexpected Access' INCREMENT PATTERN-COUNTER
+            IF PATTERN-COUNTER > 3
+                MOVE 'Potential Insider Threat' TO PATTERN-IDENTIFIED
+            END-IF
+        WHEN OTHER
+            MOVE 'No specific pattern identified' TO PATTERN-IDENTIFIED
+    END-EVALUATE.
+
+GENERATE-THREAT-REPORT.
+    MOVE EVENT-DATE TO TR-DATE
+    MOVE EVENT-TIME TO TR-TIME
+    MOVE EVENT-SOURCE TO TR-SOURCE
+    MOVE EVENT-TYPE TO TR-TYPE
+    MOVE SEVERITY TO TR-SEVERITY
+    MOVE EVENT-DESCRIPTION TO TR-DESCRIPTION
+    WRITE THREAT-REPORT-RECORD.
+
+COUNT-PATTERN SECTION.
+    /* Implement logic to count occurrences of specific patterns within a timeframe */
