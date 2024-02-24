@@ -1,0 +1,74 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. BankingTransactionProcessing.
+AUTHOR. Your Name.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+    SELECT account-file ASSIGN TO 'account-file.dat'.
+    SELECT transaction-file ASSIGN TO 'transaction-file.dat'.
+    SELECT daily-summary ASSIGN TO 'daily-summary.dat'.
+
+DATA DIVISION.
+FILE SECTION.
+FD account-file.
+01 ACCOUNT-RECORD.
+    05 ACCOUNT-ID        PIC 9(8).
+    05 ACCOUNT-BALANCE   PIC 9(7)V99.
+
+FD transaction-file.
+01 TRANSACTION-RECORD.
+    05 TR-ACCOUNT-ID     PIC 9(8).
+    05 TR-TYPE           PIC X.
+        88 DEPOSIT       VALUE 'D'.
+        88 WITHDRAWAL    VALUE 'W'.
+        88 TRANSFER      VALUE 'T'.
+    05 TR-AMOUNT         PIC 9(7)V99.
+    05 TR-DEST-ACCOUNT   PIC 9(8).
+
+FD daily-summary.
+01 SUMMARY-RECORD.
+    05 SR-ACCOUNT-ID     PIC 9(8).
+    05 SR-END-BALANCE    PIC 9(7)V99.
+
+WORKING-STORAGE SECTION.
+01 WS-END-OF-FILE       PIC X VALUE 'N'.
+    88 EOF              VALUE 'Y'.
+    88 NOT-EOF          VALUE 'N'.
+
+PROCEDURE DIVISION.
+BEGIN.
+    OPEN INPUT account-file transaction-file
+        OUTPUT daily-summary
+    READ account-file AT END SET EOF TO TRUE.
+    PERFORM UNTIL EOF
+        PERFORM PROCESS-TRANSACTIONS
+        WRITE SUMMARY-RECORD FROM ACCOUNT-RECORD
+        READ account-file AT END SET EOF TO TRUE.
+    END-PERFORM
+    CLOSE account-file transaction-file daily-summary
+    STOP RUN.
+
+PROCESS-TRANSACTIONS.
+    PERFORM UNTIL EOF
+        READ transaction-file INTO TRANSACTION-RECORD AT END SET EOF TO TRUE.
+        IF NOT EOF AND TR-ACCOUNT-ID = ACCOUNT-ID
+            EVALUATE TR-TYPE
+                WHEN DEPOSIT
+                    ADD TR-AMOUNT TO ACCOUNT-BALANCE
+                WHEN WITHDRAWAL
+                    SUBTRACT TR-AMOUNT FROM ACCOUNT-BALANCE
+                WHEN TRANSFER
+                    SUBTRACT TR-AMOUNT FROM ACCOUNT-BALANCE
+                    PERFORM TRANSFER-AMOUNT
+            END-EVALUATE
+        END-IF
+    END-PERFORM.
+
+TRANSFER-AMOUNT.
+    READ account-file INTO ACCOUNT-RECORD AT END SET EOF TO TRUE.
+    PERFORM UNTIL EOF OR ACCOUNT-ID = TR-DEST-ACCOUNT
+        READ account-file INTO ACCOUNT-RECORD AT END SET EOF TO TRUE.
+    END-PERFORM.
+    IF ACCOUNT-ID = TR-DEST-ACCOUNT
+        ADD TR-AMOUNT TO ACCOUNT-BALANCE.
