@@ -1,0 +1,63 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. InventoryManagementSystem.
+AUTHOR. Your Name.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+    SELECT inventory-file ASSIGN TO 'inventory.dat'.
+    SELECT transaction-file ASSIGN TO 'transactions.dat'.
+    SELECT report-file ASSIGN TO 'report.dat'.
+
+DATA DIVISION.
+FILE SECTION.
+FD inventory-file.
+01 INVENTORY-RECORD.
+    05 PRODUCT-ID        PIC 9(5).
+    05 PRODUCT-NAME      PIC X(25).
+    05 QUANTITY-IN-STOCK PIC 9(5).
+
+FD transaction-file.
+01 TRANSACTION-RECORD.
+    05 TR-PRODUCT-ID     PIC 9(5).
+    05 TRANSACTION-TYPE  PIC X.
+        88 TR-ADD        VALUE 'A'.
+        88 TR-SUBTRACT   VALUE 'S'.
+    05 TR-QUANTITY       PIC 9(5).
+
+FD report-file.
+01 REPORT-RECORD.
+    05 RP-PRODUCT-ID     PIC 9(5).
+    05 RP-PRODUCT-NAME   PIC X(25).
+    05 RP-STOCK-LEVEL    PIC 9(5).
+
+WORKING-STORAGE SECTION.
+01 WS-END-OF-FILE       PIC X VALUE 'N'.
+    88 EOF              VALUE 'Y'.
+    88 NOT-EOF          VALUE 'N'.
+
+PROCEDURE DIVISION.
+BEGIN.
+    OPEN INPUT inventory-file transaction-file
+         OUTPUT report-file
+    READ inventory-file INTO INVENTORY-RECORD AT END SET EOF TO TRUE.
+    PERFORM UNTIL EOF
+        PERFORM PROCESS-TRANSACTIONS
+        READ inventory-file INTO INVENTORY-RECORD AT END SET EOF TO TRUE.
+    END-PERFORM
+    CLOSE inventory-file transaction-file report-file
+    STOP RUN.
+
+PROCESS-TRANSACTIONS.
+    PERFORM UNTIL EOF OR PRODUCT-ID NOT = TR-PRODUCT-ID
+        READ transaction-file INTO TRANSACTION-RECORD AT END SET EOF TO TRUE.
+        IF NOT EOF
+            EVALUATE TRUE
+                WHEN TR-ADD
+                    ADD TR-QUANTITY TO QUANTITY-IN-STOCK
+                WHEN TR-SUBTRACT
+                    SUBTRACT TR-QUANTITY FROM QUANTITY-IN-STOCK
+            END-EVALUATE
+        END-IF
+    END-PERFORM.
+    WRITE REPORT-RECORD FROM INVENTORY-RECORD.
