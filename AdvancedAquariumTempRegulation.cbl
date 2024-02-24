@@ -1,0 +1,82 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. AdvancedAquariumTempRegulation.
+AUTHOR. Your Name.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+    SELECT aquarium-details ASSIGN TO 'aquarium-details.dat'.
+    SELECT temperature-log ASSIGN TO 'temperature-log.dat'.
+    SELECT action-log ASSIGN TO 'action-log.dat'.
+
+DATA DIVISION.
+FILE SECTION.
+FD aquarium-details.
+01 AQUARIUM-DETAILS-RECORD.
+    05 AQUARIUM-ID             PIC X(5).
+    05 AQUARIUM-NAME           PIC X(25).
+    05 MIN-TEMP                PIC 9(3)V9(1).
+    05 MAX-TEMP                PIC 9(3)V9(1).
+    05 CURRENT-TEMP            PIC 9(3)V9(1).
+    05 LAST-ACTION-TAKEN       PIC X(20).
+    05 LAST-ACTION-TIME        PIC 9(12).
+
+FD temperature-log.
+01 TEMP-LOG-RECORD.
+    05 LOG-AQUARIUM-ID         PIC X(5).
+    05 LOG-TEMP-READING        PIC 9(3)V9(1).
+    05 LOG-TIME                PIC 9(12).
+
+FD action-log.
+01 ACTION-LOG-RECORD.
+    05 ACTION-AQUARIUM-ID      PIC X(5).
+    05 ACTION-DESC             PIC X(20).
+    05 ACTION-TIME             PIC 9(12).
+
+WORKING-STORAGE SECTION.
+01 WS-CURRENT-DATE-TIME       PIC 9(12) VALUE 202310011200. /* YYYYMMDDHHMM */
+01 WS-END-OF-FILE             PIC X VALUE 'N'.
+    88 EOF                    VALUE 'Y'.
+    88 NOT-EOF                VALUE 'N'.
+
+PROCEDURE DIVISION.
+BEGIN.
+    OPEN INPUT aquarium-details temperature-log
+        OUTPUT action-log
+    PERFORM PROCESS-AQUARIUMS UNTIL EOF
+    CLOSE aquarium-details temperature-log action-log
+    STOP RUN.
+
+PROCESS-AQUARIUMS.
+    READ aquarium-details INTO AQUARIUM-DETAILS-RECORD AT END SET EOF TO TRUE
+    PERFORM UNTIL EOF
+        PERFORM ANALYZE-TEMPERATURE
+        READ aquarium-details INTO AQUARIUM-DETAILS-RECORD AT END SET EOF TO TRUE
+    END-PERFORM.
+
+ANALYZE-TEMPERATURE.
+    READ temperature-log INTO TEMP-LOG-RECORD AT END
+        PERFORM LOG-ACTION "Sensor Error - No Data" 
+        GO TO END-ANALYZE
+    END-READ
+    IF LOG-AQUARIUM-ID NOT = AQUARIUM-ID
+        PERFORM LOG-ACTION "Mismatched ID in Log"
+        EXIT PERFORM
+    END-IF
+    EVALUATE TRUE
+        WHEN CURRENT-TEMP < MIN-TEMP
+            PERFORM LOG-ACTION "Increase Temp"
+        WHEN CURRENT-TEMP > MAX-TEMP
+            PERFORM LOG-ACTION "Decrease Temp"
+        WHEN OTHER
+            PERFORM LOG-ACTION "Temp within range"
+    END-EVALUATE
+
+    END-ANALYZE.
+
+LOG-ACTION SECTION.
+    MOVE AQUARIUM-ID TO ACTION-AQUARIUM-ID
+    MOVE WS-CURRENT-DATE-TIME TO ACTION-TIME
+    MOVE FUNCTION CURRENT-DATE TO LAST-ACTION-TIME
+    MOVE ACTION-DESC TO LAST-ACTION-TAKEN
+    WRITE ACTION-LOG-RECORD.
