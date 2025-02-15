@@ -1,0 +1,141 @@
+/* Base styles for the body */
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #1E1E1E;
+    color: #00FF00;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* Container for layout */
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+/* Header styling */
+header {
+    background-color: #000000;
+    padding: 20px 0;
+    border-bottom: 2px solid #00FF00;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #00FF00;
+    text-align: center;
+    letter-spacing: 3px;
+}
+
+nav {
+    text-align: center;
+}
+
+.nav-menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-menu li {
+    display: inline;
+    margin: 0 15px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #00FF00;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    color: #FFFF00;
+    border-bottom: 2px solid #FFFF00;
+}
+
+/* Main content */
+main {
+    padding: 20px 0;
+}
+
+h2 {
+    color: #00FF00;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #00FF00;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+}
+
+p {
+    color: #B0B0B0;
+    font-size: 1.2rem;
+}
+
+ul {
+    color: #B0B0B0;
+    font-size: 1.1rem;
+    margin-left: 20px;
+}
+
+ul li {
+    margin-bottom: 10px;
+}
+
+/* Footer styling */
+footer {
+    background-color: #000000;
+    color: #00FF00;
+    text-align: center;
+    padding: 20px 0;
+    border-top: 2px solid #00FF00;
+}
+
+footer p {
+    margin: 0;
+}
+
+footer .theme-switch {
+    background-color: #00FF00;
+    color: #000000;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+footer .theme-switch:hover {
+    background-color: #FFFF00;
+}
+
+/* Theme switching styles */
+body.light-mode {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+body.light-mode header {
+    background-color: #F0F0F0;
+}
+
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode .nav-menu a {
+    color: #000000;
+}
+
+body.light-mode footer {
+    background-color: #F0F0F0;
+    color: #000000;
+}
+
+body.light-mode footer .theme-switch {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+
+body.light-mode footer .theme-switch:hover {
+    background-color: #AAAAAA;
+}
