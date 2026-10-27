@@ -13,13 +13,14 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const progDir = join(root, 'programs');
 const REPO = 'https://github.com/SolutionsAsService/LearnCOBOL/blob/main';
 
 const notes = new Map(
   JSON.parse(await readFile(join(root, 'tools', 'program-notes.json'), 'utf8')).map((n) => [n.file, n]),
 );
 
-const files = (await readdir(root)).filter((f) => f.endsWith('.cbl')).sort();
+const files = (await readdir(progDir)).filter((f) => f.endsWith('.cbl')).sort();
 
 const programs = [];
 /* Where the code actually begins, counted over the whole corpus: the fixed
@@ -28,7 +29,7 @@ const programs = [];
 const startCounts = {};
 let countedLines = 0;
 for (const file of files) {
-  const src = await readFile(join(root, file), 'utf8');
+  const src = await readFile(join(progDir, file), 'utf8');
 
   // A file that ends in a newline splits into a final empty string. Dropping it
   // makes `lines` agree with `wc -l`, which is the instrument a reader owns.
@@ -57,7 +58,17 @@ for (const file of files) {
     .filter((l) => l.trim() !== '' && !/AUTHOR\.\s*Your Name\.?/i.test(l));
 
   const programId = /PROGRAM-ID\.\s*([A-Za-z0-9-]+)/i.exec(src)?.[1] ?? null;
-  const paragraphs = [...src.matchAll(/^[A-Z][A-Z0-9-]*\.\s*$/gm)].length;
+  const paragraphNames = [...src.matchAll(/^([A-Z][A-Z0-9-]*)\.\s*$/gm)].map((m) => m[1]);
+  const paragraphs = paragraphNames.length;
+
+  /* Statements beginning with each verb, counted at the start of a line after
+     leading space, so a verb inside an identifier or a comment is never counted. */
+  const VERBS = ['ACCEPT','ADD','CALL','CLOSE','COMPUTE','CONTINUE','DISPLAY','DIVIDE','EVALUATE','EXIT','GO','IF','INITIALIZE','INSPECT','MERGE','MOVE','MULTIPLY','OPEN','PERFORM','READ','REWRITE','SEARCH','SET','SORT','START','STOP','STRING','SUBTRACT','UNSTRING','WRITE'];
+  const verbs = {};
+  for (const verb of VERBS) {
+    const n = [...src.matchAll(new RegExp(`^[ \\t]*${verb}\\b`, 'gim'))].length;
+    if (n > 0) verbs[verb] = n;
+  }
   const fileControls = [...src.matchAll(/^\s*SELECT\s+[A-Za-z0-9-]+\s+ASSIGN/gim)].length;
   const hasScreen = /SCREEN SECTION\./i.test(src);
   const maxColumns = lines.length ? Math.max(...lines.map((l) => l.length)) : 0;
@@ -78,6 +89,8 @@ for (const file of files) {
     codeLines: body.length,
     divisions,
     paragraphs,
+    paragraphNames,
+    verbs,
     fileControls,
     hasScreen,
     maxColumns,
@@ -90,7 +103,9 @@ for (const file of files) {
     // The lines that run past the last code column, shown struck through on
     // the page where the 80-column rule is explained.
     longLines: lines.filter((l) => l.length > 72).slice(0, 3),
-    url: `${REPO}/${file}`,
+    source: lines,
+    path: `programs/${file}`,
+    url: `${REPO}/programs/${file}`,
   });
 }
 

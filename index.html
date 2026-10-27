@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Learn COBOL — 32 sample programs · SolutionsAsService</title>
-<meta name="description" content="Thirty-two COBOL sample programs, read in the page: the source, the 80-column fixed format it was written to, and what each program teaches. Built by SolutionsAsService.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LearnCOBOL — 32 COBOL programs, read line by line</title>
+<meta name="description" content="Thirty-two COBOL sample programs with their real source, the 80-column fixed format they were written to, and what each one teaches.">
 <meta name="author" content="SolutionsAsService">
 <link rel="stylesheet" href="styles.css">
 <script>
@@ -20,271 +20,42 @@
 </script>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
 
-<header class="masthead wrap">
-  <div class="masthead__eyebrow">
-    <span class="label">SolutionsAsService</span>
-    <span class="label">Static site · no build step</span>
+<a class="skip" href="#view">Skip to content</a>
+
+<header class="bar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">&#9670;</span>
+    <span>LearnCOBOL</span>
   </div>
-
-  <h1>Learn COBOL</h1>
-
-  <p class="masthead__lead">
-    Thirty-two COBOL programs sit in this repository. This page puts the PROCEDURE DIVISION
-    of each one on the page, in the columns it was written to, with what each program teaches.
-  </p>
-
-  <div class="field">
-    <div class="holes" aria-hidden="true"></div>
-
-    <div class="ruler" role="img" aria-label="Punch-card column scale, 1 to 80. Columns 1 to 6 sequence, 7 indicator, 8 to 11 Area A, 12 to 72 Area B, 73 to 80 ignored by the compiler.">
-      <div class="ruler__ticks"></div>
-      <div class="ruler__zone ruler__zone--a"></div>
-      <div class="ruler__zone ruler__zone--x"></div>
-      <span class="ruler__num" style="--c: 1">1</span>
-      <span class="ruler__num" style="--c: 8">8</span>
-      <span class="ruler__num" style="--c: 12">12</span>
-      <span class="ruler__num" style="--c: 24">24</span>
-      <span class="ruler__num" style="--c: 36">36</span>
-      <span class="ruler__num" style="--c: 48">48</span>
-      <span class="ruler__num" style="--c: 60">60</span>
-      <span class="ruler__num" style="--c: 72">72</span>
-      <span class="ruler__num ruler__num--end" style="--c: 81">80</span>
-    </div>
-  </div>
-
-  <dl class="stats" id="stats">
-    <div><dt>Programs</dt><dd data-stat="programs">32</dd></div>
-    <div><dt>Lines</dt><dd data-stat="lines">1,964</dd></div>
-    <div><dt>Bytes</dt><dd data-stat="bytes">60,818</dd></div>
-    <div><dt>Files past column 72</dt><dd data-stat="filesPastColumn72">26 of 32</dd></div>
-  </dl>
-  <p class="caption">
-    Every figure on this page is produced by <span class="mono">node tools/index-programs.mjs</span>
-    from the <span class="mono">.cbl</span> files in this repository, and re-checked against
-    <span class="mono">programs.js</span> each time the page loads.
-  </p>
+  <input id="search" class="bar__search" type="search" placeholder="Filter programs&hellip;" autocomplete="off" aria-label="Filter programs">
+  <button id="theme-toggle" class="btn" type="button" aria-pressed="false">Dark mode</button>
 </header>
 
-<nav class="nav" aria-label="Sections">
-  <div class="wrap nav__inner">
-    <ul>
-      <li><a href="#what">What this is</a></li>
-      <li><a href="#card">The card</a></li>
-      <li><a href="#divisions">The four divisions</a></li>
-      <li><a href="#programs">The programs</a></li>
-      <li><a href="#run">Run one</a></li>
-      <li><a href="https://github.com/SolutionsAsService/LearnCOBOL">Source</a></li>
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Programs">
+    <h2>Browse</h2>
+    <ul class="sidebar__nav">
+      <li><a href="#/" data-nav="overview">Overview</a></li>
+      <li><a href="#/card" data-nav="card">The 80-column card</a></li>
+      <li><a href="#/divisions" data-nav="divisions">The four divisions</a></li>
+      <li><a href="#/run" data-nav="run">Run one</a></li>
     </ul>
-    <button id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
-  </div>
-</nav>
+    <h2>Programs</h2>
+    <div id="groups"></div>
+  </nav>
 
-<main id="main">
-
-  <section class="section wrap" id="what">
-    <div class="section__head">
-      <h2><span class="section__num">01</span>What this is</h2>
-    </div>
-    <p>
-      COBOL — Common Business-Oriented Language — was designed by the
-      <a href="https://en.wikipedia.org/wiki/COBOL">CODASYL committee</a> and first specified
-      in 1960; the current standard is ISO/IEC 1989. It was written to read like English
-      business prose rather than like mathematics.
-    </p>
-    <p>
-      The programs here are small and self-contained: payroll, loans, inventory, tax, stock
-      valuation, aquaculture, crop rotation. They run from
-      <strong data-stat="range">27–87</strong> lines each and do one job apiece — the kind of
-      work the language was written for.
-    </p>
-  </section>
-
-  <section class="section wrap" id="card">
-    <div class="section__head">
-      <h2><span class="section__num">02</span>The card</h2>
-      <p class="caption">
-        COBOL's fixed source format is a punch card turned into a rule. The column a character
-        sits in decides whether the compiler reads it at all.
-      </p>
-    </div>
-
-<div class="field">
-      <div class="ruler" role="img" aria-label="Punch-card column scale, 1 to 80. Columns 1 to 6 sequence, 7 indicator, 8 to 11 Area A, 12 to 72 Area B, 73 to 80 ignored by the compiler.">
-        <div class="ruler__ticks"></div>
-        <div class="ruler__zone ruler__zone--a"></div>
-        <div class="ruler__zone ruler__zone--x"></div>
-        <span class="ruler__num" style="--c: 1">1</span>
-        <span class="ruler__num" style="--c: 8">8</span>
-        <span class="ruler__num" style="--c: 12">12</span>
-        <span class="ruler__num" style="--c: 24">24</span>
-        <span class="ruler__num" style="--c: 36">36</span>
-        <span class="ruler__num" style="--c: 48">48</span>
-        <span class="ruler__num" style="--c: 60">60</span>
-        <span class="ruler__num" style="--c: 72">72</span>
-        <span class="ruler__num ruler__num--end" style="--c: 81">80</span>
-      </div>
+  <main class="view" id="view" tabindex="-1"></main>
 </div>
 
-    <ul class="divisions">
-      <li>
-        <h3>1–6 Sequence</h3>
-        <p>Optional line numbers. The compiler ignores them; they existed so a dropped deck of cards could be sorted back into order.</p>
-      </li>
-      <li>
-        <h3>7 Indicator</h3>
-        <p><span class="mono">*</span> in this column makes the whole line a comment. <span class="mono">-</span> continues a literal from the line above.</p>
-      </li>
-      <li>
-        <h3>8–11 Area A</h3>
-        <p>Division, section and paragraph headers, and <span class="mono">01</span>-level records, must begin here.</p>
-      </li>
-      <li>
-        <h3>12–72 Area B</h3>
-        <p>Everything else — statements, clauses, subordinate data items. This is where the program lives.</p>
-      </li>
-    </ul>
-
-    <p>
-      Columns 73 to 80 are not code. In fixed format the compiler never reads them, which is
-      why a line can look complete and still be truncated. In this repository
-      <strong data-stat="filesPastColumn72">26 of 32</strong> files contain
-      <strong data-stat="linesPastColumn72">48</strong> such lines; wherever one appears in a
-      listing on this page, its tail is struck through. One is shown outright, below.
-    </p>
-
-    <p>
-      The instrument is 1960; these files are not. Across the
-      <strong data-stat="linesCounted">1,707</strong> non-blank lines in the corpus,
-      <strong data-stat="startColumn5">700</strong> begin at column 5,
-      <strong data-stat="startColumn1">578</strong> at column 1, and only
-      <strong data-stat="areaA">241</strong> begin anywhere in Area A (columns 8–11) — just
-      <strong data-stat="startColumn8">22</strong> of them exactly at column 8, where division
-      headers are supposed to start. This code is indented the way modern code is indented, and
-      GnuCOBOL compiles it either way. The rule above is what the language still carries; the
-      measurement is what these programs actually do.
-    </p>
-
-    <p class="caption">
-      A real line from <span class="mono" id="overflow-name">a program in this repository</span>,
-      with the tail the compiler never reads struck through.
-    </p>
-    <div class="code" tabindex="0" role="group" aria-label="A real line, with the tail past column 72 struck through">
-      <div class="code__inner">
-        <pre><code id="overflow-sample"></code></pre>
-      </div>
-    </div>
-
-    <p class="caption">
-      One square per program; filled squares are files with at least one line past column 72.
-    </p>
-    <ul class="multiple" id="multiple" aria-hidden="true"></ul>
-  </section>
-
-  <section class="section wrap" id="divisions">
-    <div class="section__head">
-      <h2><span class="section__num">03</span>The four divisions</h2>
-      <p class="caption">Every COBOL program is these four, in this order. Nothing else is allowed at the top level.</p>
-    </div>
-
-    <ul class="divisions">
-      <li>
-        <h3>Identification</h3>
-        <p>Names the program. <span class="mono">PROGRAM-ID</span> is the only clause that is always required.</p>
-      </li>
-      <li>
-        <h3>Environment</h3>
-        <p>Declares the machine: which files map to which external names, via <span class="mono">SELECT … ASSIGN</span>.</p>
-      </li>
-      <li>
-        <h3>Data</h3>
-        <p>Declares every field before it is used, with a picture: <span class="mono">PIC 9(5)V99</span> is five digits, an implied decimal point, two more digits.</p>
-      </li>
-      <li>
-        <h3>Procedure</h3>
-        <p>The executable part: named paragraphs, performed in sequence or in loops. No anonymous blocks, no nesting by indentation alone.</p>
-      </li>
-    </ul>
-
-    <p class="caption">
-      <span class="mono">PayrollProcessing.cbl</span>, from the PROCEDURE DIVISION. The band at
-      the left is Area A; the band at the right is the part of the line the compiler discards.
-    </p>
-    <div class="code" tabindex="0" role="group" aria-label="PayrollProcessing.cbl, from the PROCEDURE DIVISION">
-      <div class="code__inner">
-        <pre><code id="sample"></code></pre>
-      </div>
-    </div>
-  </section>
-
-  <section class="section wrap" id="programs">
-    <div class="section__head">
-      <h2><span class="section__num">04</span>The programs</h2>
-      <p class="caption">
-        All <span data-stat="programs">32</span>, as they are in the repository. Open a program to
-        read ten lines from its PROCEDURE DIVISION; follow the filename to the full source.
-        <span class="mono">FD/SELECT</span> counts the files a program opens — 0 means it is
-        console-driven and talks to the terminal with ACCEPT and DISPLAY instead.
-      </p>
-    </div>
-
-    <noscript>
-      <p class="caption">
-        Browsing, filtering and the column-72 marking are done in the browser. Without
-        JavaScript the figures above still hold, and the sources are readable directly in the
-        repository: <a href="https://github.com/SolutionsAsService/LearnCOBOL">browse the .cbl files on GitHub</a>.
-      </p>
-    </noscript>
-
-    <div class="controls">
-      <label class="label" for="q">Filter</label>
-      <input id="q" type="search" placeholder="payroll, PERFORM, file handling…" autocomplete="off">
-      <span class="count" id="count" role="status"></span>
-    </div>
-    <div class="controls" id="categories"></div>
-
-    <ul class="programs" id="list"></ul>
-  </section>
-
-  <section class="section wrap" id="run">
-    <div class="section__head">
-      <h2><span class="section__num">05</span>Run one</h2>
-      <p class="caption">These are fixed-format sources, so <a href="https://gnucobol.sourceforge.io/">GnuCOBOL</a> compiles them as they stand.</p>
-    </div>
-
-    <div class="code" tabindex="0" role="group" aria-label="GnuCOBOL commands">
-      <div class="code__inner">
-        <pre><code># compile to a standalone executable
-cobc -x PayrollProcessing.cbl
-./PayrollProcessing
-
-# or build a module and run it through cobcrun
-cobc -m PayrollProcessing.cbl
-cobcrun PayrollProcessing
-
-# free-format sources, if you write your own
-cobc -x -free MyProgram.cbl</code></pre>
-      </div>
-    </div>
-
-    <p>
-      <span class="mono">cobc</span> is the GnuCOBOL compiler. <span class="mono">-x</span> produces
-      an executable, <span class="mono">-m</span> a loadable module, and
-      <span class="mono">-free</span> switches off the 80-column rules described above — which is
-      the fastest way to see what the card was doing for you.
-    </p>
-  </section>
-
-</main>
-
-<footer class="footer wrap">
-  <p>
-    Built by <a href="https://github.com/SolutionsAsService">SolutionsAsService</a> ·
-    <a href="https://github.com/SolutionsAsService/LearnCOBOL">Source</a> ·
-    <a href="https://github.com/SolutionsAsService/PersonalPortfolio">More projects</a>
+<noscript>
+  <p style="padding: 1rem">
+    Reading the programs needs JavaScript: every figure and every listing is
+    rendered from <code>programs.js</code>, which is generated from the
+    <code>.cbl</code> files. The sources are readable directly in the
+    repository: <a href="https://github.com/SolutionsAsService/LearnCOBOL/tree/main/programs">browse the programs folder</a>.
   </p>
-</footer>
+</noscript>
 
 <script src="programs.js" defer></script>
 <script src="script.js" defer></script>
