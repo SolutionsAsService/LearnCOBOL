@@ -1,141 +1,730 @@
-/* Base styles for the body */
+/* LearnCOBOL — SolutionsAsService
+   Every colour pair used here is listed and measured in tools/contrast.mjs.
+   Run `node tools/contrast.mjs` to reproduce the ratios quoted in DESIGN-LOG.md.
+
+   The ordering schema is declared once, here, and every rule below spends it:
+     type     one modular scale, ratio 1.25
+     space    --u: 0.5rem, all vertical space a multiple of it
+     measure  --measure for prose, --measure-lead for the standfirst
+     column   --col: one punch-card column; the code field is exactly 80 of them */
+
+:root {
+  /* Type: ratio 1.25 (major third). Ranks actually used: --t--1 code, --t-0
+     body, --t-1 h3 and standfirst, --t-2 figures, --t-3 h2, --t-4 h1,
+     --t-5 h1 from 48rem up. */
+  --t--1: 0.8rem;
+  --t-0: 1rem;
+  --t-1: 1.25rem;
+  --t-2: 1.563rem;
+  --t-3: 1.953rem;
+  --t-4: 2.441rem;
+  --t-5: 3.052rem;
+
+  /* Leading, chosen so the line box divides the unit: 16px x 1.5 = 24px = 3u;
+     12.8px x 1.875 = 24px = 3u. Display type is set solid, the standard
+     exemption from the text rhythm. */
+  --lh-text: 1.5;
+  --lh-code: 1.875;
+  --lh-display: 1.2;
+
+  /* Baseline unit; all vertical space is a multiple of it. */
+  --u: 0.5rem;
+
+  /* The card and the measure. The card holds 80 monospace columns; prose is
+     capped at Bringhurst's measure inside it. 66ch is the classic count, but
+     `ch` resolves to the "0" advance, which is wider than the average
+     character in a proportional face, so the measure is calibrated down to
+     60ch to land near 66 real characters. */
+  --card-max: 62rem;
+  --card-min: 14rem;
+  --stat-min: 9rem;
+  --field-min: 14rem;
+  --measure: 60ch;
+  --measure-lead: 46ch;
+  /* One punch-card column: an absolute 1ch of the monospace face, so the ruler,
+     the hole strip and the code field resolve --col to the same distance. It was
+     calc(100% / 80), which made a column a fraction of whatever box it sat in —
+     true inside the code field and false in the full-width ruler. */
+  --col: calc(var(--code-col) / 80);
+  --code-col: 80ch;
+
+  --font-mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  --font-text: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Light theme: manila card stock, ink black, one vermilion accent. */
+  --paper: #f0e9dc;
+  --card: #f7f2e8;
+  --ink: #1b1814;
+  --muted: #564f42;
+  --accent: #a8321a;
+  --rule: #c9bfab;
+  --tick: #a2977f;
+  --hole: #d8cdb8;
+  --code-field: #e8e0cf;
+  --zone-a: #e2d7c1;
+  --zone-x: #dcd2c0;
+  --code-ink: #242019;
+  --code-dim: #6b6355;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --paper: #14120e;
+  --card: #1d1a14;
+  --ink: #ede6d6;
+  --muted: #a9a294;
+  --accent: #ee7a54;
+  --rule: #39332a;
+  --tick: #4a4235;
+  --hole: #2c2820;
+  --code-field: #1a1712;
+  --zone-a: #241f18;
+  --zone-x: #2c2820;
+  --code-ink: #e6decc;
+  --code-dim: #8c8577;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14120e;
+    --card: #1d1a14;
+    --ink: #ede6d6;
+    --muted: #a9a294;
+    --accent: #ee7a54;
+    --rule: #39332a;
+    --tick: #4a4235;
+    --hole: #2c2820;
+    --code-field: #1a1712;
+    --zone-a: #241f18;
+    --zone-x: #2c2820;
+    --code-ink: #e6decc;
+    --code-dim: #8c8577;
+
+    color-scheme: dark;
+  }
+}
+
+/* ------------------------------------------------------------------ base */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* The nav is sticky; in-page links must not land underneath it. */
+  scroll-padding-top: calc(var(--u) * 12);
+}
+
 body {
-    font-family: 'Courier New', Courier, monospace;
-    background-color: #1E1E1E;
-    color: #00FF00;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--t-0);
+  line-height: var(--lh-text);
+  transition: background-color 120ms linear, color 120ms linear;
 }
 
-/* Container for layout */
-.container {
-    width: 80%;
-    margin: 0 auto;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Header styling */
-header {
-    background-color: #000000;
-    padding: 20px 0;
-    border-bottom: 2px solid #00FF00;
+/* Holmes and Mace: the keyboard is a first-class reader. Every focusable
+   thing gets the same visible ring in both themes. */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
-h1 {
-    font-size: 2.5rem;
-    color: #00FF00;
-    text-align: center;
-    letter-spacing: 3px;
+.skip {
+  position: absolute;
+  left: var(--u);
+  top: var(--u);
+  transform: translateY(-200%);
+  z-index: 10;
+  background: var(--card);
+  color: var(--ink);
+  padding: calc(var(--u) * 1.5) calc(var(--u) * 2);
+  border: 2px solid var(--accent);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-nav {
-    text-align: center;
+.skip:focus {
+  transform: none;
 }
 
-.nav-menu {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.wrap {
+  width: 100%;
+  max-width: var(--card-max);
+  margin-inline: auto;
+  padding-inline: calc(var(--u) * 3);
 }
 
-.nav-menu li {
-    display: inline;
-    margin: 0 15px;
-}
-
-.nav-menu a {
-    text-decoration: none;
-    color: #00FF00;
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.nav-menu a:hover,
-.nav-menu a.active {
-    color: #FFFF00;
-    border-bottom: 2px solid #FFFF00;
-}
-
-/* Main content */
-main {
-    padding: 20px 0;
-}
-
-h2 {
-    color: #00FF00;
-    font-size: 1.8rem;
-    border-bottom: 2px solid #00FF00;
-    margin-bottom: 20px;
-    padding-bottom: 5px;
+@media (max-width: 30rem) {
+  .wrap {
+    padding-inline: calc(var(--u) * 2);
+  }
 }
 
 p {
-    color: #B0B0B0;
-    font-size: 1.2rem;
+  max-width: var(--measure);
+  margin: 0 0 calc(var(--u) * 2);
 }
 
-ul {
-    color: #B0B0B0;
-    font-size: 1.1rem;
-    margin-left: 20px;
+a {
+  color: var(--accent);
+  text-underline-offset: 0.2em;
 }
 
-ul li {
-    margin-bottom: 10px;
+h1,
+h2,
+h3 {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0;
+  line-height: var(--lh-display);
 }
 
-/* Footer styling */
-footer {
-    background-color: #000000;
-    color: #00FF00;
-    text-align: center;
-    padding: 20px 0;
-    border-top: 2px solid #00FF00;
+h1 {
+  font-size: var(--t-4);
+  letter-spacing: 0.02em;
 }
 
-footer p {
-    margin: 0;
+@media (min-width: 48rem) {
+  h1 {
+    font-size: var(--t-5);
+  }
 }
 
-footer .theme-switch {
-    background-color: #00FF00;
-    color: #000000;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
+h2 {
+  font-size: var(--t-3);
+  letter-spacing: 0.04em;
 }
 
-footer .theme-switch:hover {
-    background-color: #FFFF00;
+h3 {
+  font-size: var(--t-1);
+  letter-spacing: 0.06em;
 }
 
-/* Theme switching styles */
-body.light-mode {
-    background-color: #FFFFFF;
-    color: #000000;
+/* Small caps label: the card's printed annotation. */
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
 }
 
-body.light-mode header {
-    background-color: #F0F0F0;
+.mono {
+  font-family: var(--font-mono);
 }
 
-body.light-mode h1,
-body.light-mode h2,
-body.light-mode .nav-menu a {
-    color: #000000;
+/* ------------------------------------------------------- card furniture */
+
+/* Every element that draws in columns lives in a .field: monospace, so `ch` is
+   one character advance, exactly 80 columns wide, and scrolling rather than
+   rescaling when the viewport is narrower than a card. */
+.field {
+  font-family: var(--font-mono);
+  /* Same size as the code field: `ch` resolves against the font of the element
+     that spends it, so the ruler is 80 columns wide only at the code's size. */
+  font-size: var(--t--1);
+  overflow-x: auto;
 }
 
-body.light-mode footer {
-    background-color: #F0F0F0;
-    color: #000000;
+.field .holes,
+.field .ruler {
+  width: var(--code-col);
 }
 
-body.light-mode footer .theme-switch {
-    background-color: #000000;
-    color: #FFFFFF;
+/* The 80-column scale. A real instrument, not a texture: the same element
+   teaches the fixed format and lays out the page. */
+.ruler {
+  position: relative;
+  height: calc(var(--u) * 5);
+  border-block: 1px solid var(--rule);
 }
 
-body.light-mode footer .theme-switch:hover {
-    background-color: #AAAAAA;
+.ruler__ticks {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--tick) 0 1px,
+    transparent 1px var(--col)
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 40%;
+  background-position: bottom;
+}
+
+.ruler__zone {
+  position: absolute;
+  top: 0;
+  bottom: 40%;
+}
+
+/* Columns 8-11: Area A, where divisions and 01-levels must begin. */
+.ruler__zone--a {
+  left: calc(7 * var(--col));
+  width: calc(4 * var(--col));
+  background: var(--zone-a);
+}
+
+/* Columns 73-80: the compiler never reads them. */
+.ruler__zone--x {
+  left: calc(72 * var(--col));
+  width: calc(8 * var(--col));
+  background: var(--zone-x);
+}
+
+.ruler__num {
+  position: absolute;
+  top: 42%;
+  left: calc((var(--c) - 1) * var(--col));
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  color: var(--muted);
+}
+
+.ruler__num--end {
+  transform: translateX(-100%);
+}
+
+/* Manufacturing strip: the card's sprocket-feed row. Decorative. */
+.holes {
+  height: calc(var(--u) * 0.75);
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--hole) 0 calc(var(--col) - var(--u) / 2),
+    transparent calc(var(--col) - var(--u) / 2) var(--col)
+  );
+}
+
+/* ------------------------------------------------------------- masthead */
+
+.masthead {
+  padding-block: calc(var(--u) * 6) calc(var(--u) * 3);
+}
+
+.masthead__eyebrow {
+  display: flex;
+  gap: calc(var(--u) * 2);
+  align-items: baseline;
+  margin-bottom: calc(var(--u) * 2);
+}
+
+.masthead h1 {
+  margin-bottom: calc(var(--u) * 2);
+}
+
+.masthead__lead {
+  font-size: var(--t-1);
+  max-width: var(--measure-lead);
+  margin-bottom: calc(var(--u) * 4);
+}
+
+/* Tufte: the corpus is the evidence, so the figures lead the page. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--stat-min), 1fr));
+  gap: calc(var(--u) * 2);
+  margin: calc(var(--u) * 3) 0 calc(var(--u) * 2);
+  padding: 0;
+  list-style: none;
+}
+
+.stats dt {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------- nav */
+
+.nav {
+  border-block: 1px solid var(--rule);
+  padding-block: calc(var(--u) * 1.5);
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 5;
+}
+
+.nav__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 1.5) calc(var(--u) * 3);
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 1.5) calc(var(--u) * 3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav a {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  padding-bottom: calc(var(--u) / 4);
+}
+
+.nav a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* The theme control sits with the navigation, not after 32 program rows. */
+#theme-toggle {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: calc(var(--u) * 1.25) calc(var(--u) * 2);
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+}
+
+#theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* -------------------------------------------------------------- sections */
+
+.section {
+  padding-block: calc(var(--u) * 8);
+  border-bottom: 1px solid var(--rule);
+}
+
+.section__head {
+  margin-bottom: calc(var(--u) * 4);
+}
+
+.section__head h2 {
+  margin-bottom: var(--u);
+}
+
+.section__num {
+  color: var(--accent);
+  margin-right: calc(var(--u) * 2);
+}
+
+/* ------------------------------------------------------------------ code */
+
+/* The field is exactly 80 monospace columns wide, so --col resolves to one
+   character advance and the bands land on the characters they claim. */
+.code {
+  background: var(--code-field);
+  border: 1px solid var(--rule);
+  overflow-x: auto;
+  margin: 0 0 calc(var(--u) * 3);
+}
+
+.code__inner {
+  position: relative;
+  width: var(--code-col);
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  line-height: var(--lh-code);
+  color: var(--code-ink);
+}
+
+/* The fixed-format bands, on the same 80 columns the ruler shows:
+   transparent to 7, Area A 8-11, Area B 12-72, ignored 73-80. */
+.code__inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent 0 calc(7 * var(--col)),
+    var(--zone-a) calc(7 * var(--col)) calc(11 * var(--col)),
+    transparent calc(11 * var(--col)) calc(72 * var(--col)),
+    var(--zone-x) calc(72 * var(--col)) 100%
+  );
+}
+
+.code pre {
+  position: relative;
+  margin: 0;
+  padding: calc(var(--u) * 2) 0;
+  white-space: pre;
+}
+
+/* Samara: the grid is built, then broken — on purpose, and only where the
+   language itself breaks it. Anything past column 72 is not COBOL. */
+.past72 {
+  color: var(--code-dim);
+  background: var(--zone-x);
+  text-decoration: line-through;
+}
+
+.caption {
+  font-size: var(--t--1);
+  color: var(--muted);
+  max-width: var(--measure);
+  margin-bottom: calc(var(--u) * 3);
+}
+
+/* ------------------------------------------------------------- divisions */
+
+.divisions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+  gap: calc(var(--u) * 3);
+  padding: 0;
+  margin: 0 0 calc(var(--u) * 3);
+  list-style: none;
+}
+
+.divisions li {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: calc(var(--u) * 2);
+}
+
+.divisions h3 {
+  color: var(--accent);
+  margin-bottom: var(--u);
+}
+
+.divisions p {
+  font-size: var(--t--1);
+  margin: 0;
+  max-width: none;
+}
+
+/* -------------------------------------------------------------- catalog */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 2);
+  align-items: center;
+  margin-bottom: calc(var(--u) * 3);
+}
+
+.controls input,
+.controls button {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  padding: calc(var(--u) * 1.25) calc(var(--u) * 2);
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+
+.controls input {
+  min-width: var(--field-min);
+  flex: 1 1 var(--field-min);
+}
+
+.controls button {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.controls button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.programs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.program {
+  border-bottom: 1px solid var(--rule);
+  padding-block: calc(var(--u) * 2);
+}
+
+.program__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--u) calc(var(--u) * 3);
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.program__id {
+  font-family: var(--font-mono);
+  font-size: var(--t-1);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.program__id:hover {
+  color: var(--accent);
+}
+
+.program__id::before {
+  content: "\25B8";
+  display: inline-block;
+  width: 1.2em;
+  color: var(--accent);
+  transition: transform 120ms ease;
+}
+
+.program__id[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+}
+
+.program__figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 2);
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.program__summary {
+  margin: var(--u) 0 0;
+  max-width: var(--measure);
+  font-size: var(--t-0);
+}
+
+.program__teaches {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-top: var(--u);
+}
+
+.program__detail {
+  margin-top: calc(var(--u) * 2);
+}
+
+.program__detail[hidden] {
+  display: none;
+}
+
+/* Excerpts opened from a program row get the same field as the hero samples:
+   wide enough to hold 80 columns, and scrollable rather than pushing the page
+   sideways when magnified. */
+.program__detail pre {
+  margin: 0 0 var(--u);
+  padding: calc(var(--u) * 2);
+  background: var(--code-field);
+  border: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  line-height: var(--lh-code);
+  color: var(--code-ink);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Small multiple: one square per program, filled if it runs past column 72. */
+.multiple {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) / 2);
+  margin: calc(var(--u) * 2) 0 calc(var(--u) * 3);
+  padding: 0;
+  list-style: none;
+}
+
+.multiple li {
+  width: calc(var(--u) * 1.5);
+  height: calc(var(--u) * 1.5);
+  border: 1px solid var(--tick);
+}
+
+.multiple li[data-past="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.footer {
+  padding-block: calc(var(--u) * 5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 2) calc(var(--u) * 4);
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.footer p {
+  margin: 0;
+  font-size: var(--t--1);
+  color: var(--muted);
+}
+
+.footer a {
+  color: var(--accent);
+}
+
+@media print {
+  .nav,
+  .controls,
+  .skip {
+    display: none;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
 }

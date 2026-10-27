@@ -40,3 +40,22 @@ We welcome contributions to this repository! If you have a sample COBOL program 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Site
+
+The repository ships a static site (, , ) that
+indexes every program in this corpus: the PROCEDURE DIVISION of each one, the
+80-column fixed format it was written to, and what each program teaches. No build
+step - open , or read it at
+https://solutionsasservice.github.io/LearnCOBOL/
+
+Regenerate the catalogue after adding or changing a `.cbl` file:
+
+```bash
+node tools/index-programs.mjs   # rewrites programs.js from the sources
+node tools/contrast.mjs         # re-measures every colour pair against WCAG
+```
+
+Design decisions, the critique rounds and the measurements behind them are in
+`DESIGN-LOG.md`; facts about this medium that a later run should not have to
+rediscover are in `CARRY-FORWARD.md`.

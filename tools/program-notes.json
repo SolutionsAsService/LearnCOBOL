@@ -1,0 +1,226 @@
+[
+  {
+    "file": "ACLManagementSystem.cbl",
+    "programId": "ACLManagementSystem",
+    "summary": "writes report of denied access attempts",
+    "category": "Security",
+    "teaches": "88-level condition names"
+  },
+  {
+    "file": "AdvancedAquariumTempRegulation.cbl",
+    "programId": "AdvancedAquariumTempRegulation",
+    "summary": "logs heating or cooling actions per aquarium",
+    "category": "Utilities/Energy",
+    "teaches": "EVALUATE TRUE"
+  },
+  {
+    "file": "AirlineReservationSystem.cbl",
+    "programId": "AirlineReservationSystem",
+    "summary": "books flight seats if availability suffices",
+    "category": "Other",
+    "teaches": "conditional PERFORM UNTIL"
+  },
+  {
+    "file": "AnnualBusinessTaxCalculation.cbl",
+    "programId": "AnnualBusinessTaxCalculation",
+    "summary": "computes corporate tax due against prepaid tax",
+    "category": "Tax",
+    "teaches": "signed PIC S9 fields"
+  },
+  {
+    "file": "AquariumTempControl.cbl",
+    "programId": "AquariumTempControl",
+    "summary": "compares current temperature to desired, sets adjustment",
+    "category": "Utilities/Energy",
+    "teaches": "nested IF/ELSE"
+  },
+  {
+    "file": "BankTransactionsProcessing.cbl",
+    "programId": "BankTransactionsProcessing",
+    "summary": "accumulates deposits and withdrawals into account balances",
+    "category": "Banking",
+    "teaches": "indexed table SEARCH"
+  },
+  {
+    "file": "BankingTransactionProcessing.cbl",
+    "programId": "BankingTransactionProcessing",
+    "summary": "applies deposits, withdrawals and transfers to accounts",
+    "category": "Banking",
+    "teaches": "EVALUATE with 88-levels"
+  },
+  {
+    "file": "BusinessBudgetManagement.cbl",
+    "programId": "BusinessBudgetManagement",
+    "summary": "totals categorized business expenses, reports net income",
+    "category": "Other",
+    "teaches": "88-level condition names"
+  },
+  {
+    "file": "BusinessInsuranceCostEstimation.cbl",
+    "programId": "BusinessInsuranceCostEstimation",
+    "summary": "estimates premium from base rate, employees, revenue",
+    "category": "Insurance",
+    "teaches": "88-level condition names"
+  },
+  {
+    "file": "CropRotationManagement.cbl",
+    "programId": "CropRotationManagement",
+    "summary": "recommends following crop for each plot",
+    "category": "Agriculture",
+    "teaches": "sequential file matching"
+  },
+  {
+    "file": "CyberLogManagementSystem.cbl",
+    "programId": "CyberLogManagementSystem",
+    "summary": "writes incident reports for matching alert codes",
+    "category": "Security",
+    "teaches": "OCCURS table lookup"
+  },
+  {
+    "file": "ECommerceDynamicPricing.cbl",
+    "programId": "ECommerceDynamicPricing",
+    "summary": "recommends 5% price changes from sales volume",
+    "category": "Retail",
+    "teaches": "COMPUTE percentage adjustment"
+  },
+  {
+    "file": "HouseholdBudgetManagement.cbl",
+    "programId": "HouseholdBudgetManagement",
+    "summary": "totals household expense categories, reports savings",
+    "category": "Other",
+    "teaches": "PERFORM UNTIL condition-name"
+  },
+  {
+    "file": "InsuranceClaimProcessing.cbl",
+    "programId": null,
+    "summary": "empty file: no divisions, records or logic",
+    "category": "Other",
+    "teaches": "none"
+  },
+  {
+    "file": "InventoryManagementSystem.cbl",
+    "programId": "InventoryManagementSystem",
+    "summary": "applies stock transactions to inventory, writes report",
+    "category": "Inventory",
+    "teaches": "EVALUATE TRUE"
+  },
+  {
+    "file": "InventoryOrderProcessing.cbl",
+    "programId": "InventoryOrderProcessing",
+    "summary": "deducts order quantities, triggers restock below minimum",
+    "category": "Inventory",
+    "teaches": "REWRITE in-place update"
+  },
+  {
+    "file": "LearnLean.cbl",
+    "programId": "LearnLean",
+    "summary": "increments counter to ten, displaying each iteration",
+    "category": "Other",
+    "teaches": "PERFORM UNTIL loop"
+  },
+  {
+    "file": "LibraryManagementSystem.cbl",
+    "programId": "LibraryManagementSystem",
+    "summary": "writes overdue notices for loans past due date",
+    "category": "Library",
+    "teaches": "date comparison logic"
+  },
+  {
+    "file": "LoanManagementSystem.cbl",
+    "programId": "LoanManagementSystem",
+    "summary": "subtracts loan payments, writes remaining balance report",
+    "category": "Banking",
+    "teaches": "matched sequential file reads"
+  },
+  {
+    "file": "LoanManagementSystem2.cbl",
+    "programId": "LoanManagementSystem",
+    "summary": "applies payments, adds monthly interest, writes statements",
+    "category": "Banking",
+    "teaches": "intrinsic functions"
+  },
+  {
+    "file": "MammalRescueManagement.cbl",
+    "programId": "MammalRescueManagement",
+    "summary": "displays treatments, records adoptions for ready animals",
+    "category": "Other",
+    "teaches": "ACCEPT interactive input"
+  },
+  {
+    "file": "PasswordPolicyCompliance.cbl",
+    "programId": "PasswordPolicyCompliance",
+    "summary": "flags short or aged passwords to violations file",
+    "category": "Security",
+    "teaches": "LENGTH OF clause"
+  },
+  {
+    "file": "PayrollProcessing.cbl",
+    "programId": "PayrollProcessing",
+    "summary": "computes tax deduction and net pay from salary",
+    "category": "Payroll",
+    "teaches": "COMPUTE arithmetic"
+  },
+  {
+    "file": "PersonalTaxReturnCalculator.cbl",
+    "programId": "PersonalTaxReturnCalculation",
+    "summary": "bracketed income tax, then refund or balance due",
+    "category": "Tax",
+    "teaches": "EVALUATE TRUE"
+  },
+  {
+    "file": "PricePredictiveAnalysis.cbl",
+    "programId": "PricePredictiveAnalysis",
+    "summary": "averages price changes to predict next price",
+    "category": "Analytics",
+    "teaches": "COMPUTE running averages"
+  },
+  {
+    "file": "RetirementFundManagement.cbl",
+    "programId": "RetirementFundManagement",
+    "summary": "adds interest and contribution to retirement balances",
+    "category": "Banking",
+    "teaches": "COMPUTE with percentage rate"
+  },
+  {
+    "file": "SEIMDataAnalysis.cbl",
+    "programId": "SEIMDataAnalysis",
+    "summary": "writes threat reports; COUNT-PATTERN paragraph unimplemented",
+    "category": "Security",
+    "teaches": "88-level condition names"
+  },
+  {
+    "file": "SmartGridEnergyManagement.cbl",
+    "programId": "SmartGridEnergyManagement",
+    "summary": "totals energy use, writes demand and efficiency records",
+    "category": "Utilities/Energy",
+    "teaches": "threshold-triggered WRITE"
+  },
+  {
+    "file": "SoftwareCompanyPayroll.cbl",
+    "programId": "SoftwareCompanyPayroll",
+    "summary": "computes regular and overtime pay, totals gross",
+    "category": "Payroll",
+    "teaches": "LINE SEQUENTIAL organization"
+  },
+  {
+    "file": "StockPortfolioValuation.cbl",
+    "programId": "StockPortfolioValuation",
+    "summary": "values each holding at current price, totals portfolio",
+    "category": "Banking",
+    "teaches": "EXIT PERFORM early exit"
+  },
+  {
+    "file": "SubscriptionManagementSystem.cbl",
+    "programId": "SubscriptionManagementSystem",
+    "summary": "cancels subscriptions, bills active ones due renewal",
+    "category": "Retail",
+    "teaches": "SET condition-name TRUE"
+  },
+  {
+    "file": "TradingPerformanceMetrics.cbl",
+    "programId": "TradingPerformanceMetrics",
+    "summary": "counts wins and losses, writes win percentage",
+    "category": "Analytics",
+    "teaches": "COMPUTE percentage ratio"
+  }
+]
